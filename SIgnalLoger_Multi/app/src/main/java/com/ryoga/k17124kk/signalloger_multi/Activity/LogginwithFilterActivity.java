@@ -154,6 +154,8 @@ public class LogginwithFilterActivity extends AppCompatActivity implements Beaco
 
                 for (DataController DataController : dataControllers) {
                     DataController.getDataSet().setExist(false);
+                    //DataCOntroller内の配列リセット
+                    DataController.resetDatasetArrayList();
                 }
             }
         });
