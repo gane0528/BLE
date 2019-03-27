@@ -15,6 +15,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.ryoga.k17124kk.signalloger_multi.R;
@@ -58,7 +59,11 @@ public class LogginwithFilterActivity extends AppCompatActivity implements Beaco
     private long nowTime;
 
     private String fileName = "BleStrengthData";
-    private String fileName_Filtered = "BleStrengthData_Filtered";
+    private String fileName_Filtered = "BleStrengthData_Lowpath";
+
+    private String filter_Mode;
+    private final String FILTER_MODE[] = {"中央値", "移動平均"};
+
 
     private int sample = 0;
 
@@ -82,7 +87,7 @@ public class LogginwithFilterActivity extends AppCompatActivity implements Beaco
 
         dataControllers = new ArrayList<>();
         for (DataSet d : file_readWriter.readFile_config()) {
-            dataControllers.add(new DataController(d));
+            dataControllers.add(new DataController(d, "中央値"));
         }
 
 
@@ -111,6 +116,14 @@ public class LogginwithFilterActivity extends AppCompatActivity implements Beaco
                 EditText editText_sample = findViewById(R.id.editText_sample_F);
                 sample = Integer.valueOf(editText_sample.getText().toString());
 
+
+                Spinner spinner_FilterMode = findViewById(R.id.spinner_filterMode);
+                filter_Mode = (String) spinner_FilterMode.getSelectedItem();
+                for (DataController dc : dataControllers) {
+                    dc.setFilterMode(filter_Mode);
+                }
+
+                Log.d("MYE_F_M", filter_Mode + "------");
 //
                 //レンジングの開始
                 try {
@@ -213,7 +226,7 @@ public class LogginwithFilterActivity extends AppCompatActivity implements Beaco
 
                 nowTime = getNowDate();
 
-                String time = String.valueOf(nowTime - startTime);
+                String time = Long.toString(nowTime - startTime);
 
 
                 rssi += time;
@@ -247,7 +260,13 @@ public class LogginwithFilterActivity extends AppCompatActivity implements Beaco
 
                     if (flag) {
                         file_readWriter.writeFile_LoggingData(dataController.getDataSet().getMemo(), time + "," + dataController.getDataSet().getRssi());
-                        file_readWriter.writeFile_LoggingData(dataController.getDataSet().getMemo() + "_Filtered_Lowpath", time + "," + dataController.getFilterd_rssi());
+
+                        if (filter_Mode.equals(FILTER_MODE[0])) {
+                            file_readWriter.writeFile_LoggingData(dataController.getDataSet().getMemo() + "_Lowpath_Median", time + "," + dataController.getFilterd_rssi());
+                        } else if (filter_Mode.equals(FILTER_MODE[1])) {
+                            file_readWriter.writeFile_LoggingData(dataController.getDataSet().getMemo() + "_Lowpath_MoveAverage", time + "," + dataController.getFilterd_rssi());
+
+                        }
 
                     }
                 }
@@ -260,7 +279,12 @@ public class LogginwithFilterActivity extends AppCompatActivity implements Beaco
 
                 if (flag) {
                     file_readWriter.writeFile_LoggingData(fileName, rssi);
-                    file_readWriter.writeFile_LoggingData(fileName_Filtered, rssi_Filtered);
+                    if (filter_Mode.equals(FILTER_MODE[0])) {
+                        file_readWriter.writeFile_LoggingData(fileName_Filtered + "_Median", rssi_Filtered);
+                    } else if (filter_Mode.equals(FILTER_MODE[1])) {
+                        file_readWriter.writeFile_LoggingData(fileName_Filtered + "_MoveAverage", rssi_Filtered);
+
+                    }
                 }
 
 

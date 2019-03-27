@@ -2,4 +2,9 @@
     <string name="app_name">SignalLoger_Multi</string>
     <string name="Activity_name">SignalLoger_Multi_Filtering</string>
 
+    <string-array name="FilterMode">
+        <item>中央値</item>
+        <item>移動平均</item>
+    </string-array>
+
 </resources>
