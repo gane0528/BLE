@@ -1,7 +1,5 @@
 package com.ryoga.k17124kk.signalloger_multi.Util;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 
 public class DataController {
@@ -23,14 +21,16 @@ public class DataController {
     private ArrayList<Integer> CENTER;
 
     private int filterd_rssi = 0;
-
-
     private DataSet dataSet;
+
+    private String time = "";
+    private StabilityOfSensingSignal stabilityOfSensingSignal;
 
 
     public DataController() {
         dataSetArrayList = new ArrayList<>();
         CENTER = new ArrayList<>();
+        stabilityOfSensingSignal = new StabilityOfSensingSignal();
 
     }
 
@@ -38,6 +38,7 @@ public class DataController {
         this();
         this.dataSet = dataSet;
         this.filterMode = filterMode;
+        stabilityOfSensingSignal = new StabilityOfSensingSignal(dataSet.getMemo());
     }
 
 
@@ -58,10 +59,8 @@ public class DataController {
 
         for (int i = 1; i < FILTER_SIZE * 2; i++) {
             CENTER.add(Integer.valueOf((int) Math.floor(i / 2) + 1));
-            Log.d("MYE_J", (int) Math.floor(i / 2) + 1 + "");
         }
 
-        Log.d("MYE_J", CENTER.get(4) - 1 + "");
 
     }
 
@@ -77,6 +76,7 @@ public class DataController {
     public void setDataSetRssi(String time, int rssi) {
         this.dataSet.setRssi(rssi);
 
+
         if (getFilterMode().equals(FILTER_MODE[0])) {
             lowpathFilter_Center(time, rssi);
 //            Log.d("MYE_F_M", "中央値");
@@ -84,6 +84,8 @@ public class DataController {
             lowpathFilter_MoveAve(time, rssi);
 //            Log.d("MYE_F_M", "移動平均");
         }
+
+        seachStability();
 
     }
 
@@ -108,6 +110,8 @@ public class DataController {
 
     //ローパスを中央値でかける
     public void lowpathFilter_Center(String time, int rssi) {
+
+        this.time = time;
 
         dataSet.setRssi(rssi);
 
@@ -140,8 +144,6 @@ public class DataController {
                 }
             }
 
-
-
             //中央値取得してセット
             setFilterd_rssi(rssi_i[CENTER.get(dataSetArrayList.size() - 1)]);
 
@@ -159,15 +161,10 @@ public class DataController {
                             rssi_i[i] = rssi_i[i] + rssi_i[j];
                             rssi_i[j] = rssi_i[i] - rssi_i[j];
                             rssi_i[i] = rssi_i[i] - rssi_i[j];
-
                         }
                     }
-
-
                     //中央値取得してセット
                     setFilterd_rssi(rssi_i[CENTER.get(dataSetArrayList.size() - 1) - 1]);
-
-
                 }
             } else {
                 //そのままセット
@@ -185,6 +182,7 @@ public class DataController {
 
     //ローパスフィルタを移動平均でかける
     public void lowpathFilter_MoveAve(String time, int rssi) {
+        this.time = time;
         dataSet.setRssi(rssi);
 
         //仮登録用にnewインスタンス
@@ -208,7 +206,6 @@ public class DataController {
 
             //平均値をセット
             setFilterd_rssi(ave);
-//            Log.d("MYE_F_M", "平均 : " + ave);
 
 
             //リストの先頭を削除して詰める
@@ -224,7 +221,6 @@ public class DataController {
 
                 //平均値をセット
                 setFilterd_rssi(ave);
-//                Log.d("MYE_F_M", "平均 : " + ave);
 
 
             } else {
@@ -235,6 +231,10 @@ public class DataController {
         }
 
 
+    }
+
+    public void seachStability() {
+        stabilityOfSensingSignal.find_Stability_of_Sensing_Signal(time, filterd_rssi);
     }
 
 
