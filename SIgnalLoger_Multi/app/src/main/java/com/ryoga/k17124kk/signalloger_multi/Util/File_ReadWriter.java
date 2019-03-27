@@ -231,4 +231,31 @@ public class File_ReadWriter {
     }
 
 
+    public void writeFile_Label(String fileName, String str) {
+        Log.d("MYE_S", "Writing File");
+
+        String path = Environment.getExternalStorageDirectory().getPath() + "/" + fileName + ".label";
+        try {
+            // FileWriterクラスのオブジェクトを生成する
+            FileWriter file = new FileWriter(path, true);
+            // PrintWriterクラスのオブジェクトを生成する
+            PrintWriter pw = new PrintWriter(new BufferedWriter(file));
+
+
+            //ファイルに書き込む\
+            pw.println(str);
+
+            Log.d("MYE_S", path + "::に書き込みました.");
+
+
+            //ファイルを閉じる
+            pw.close();
+        } catch (IOException e) {
+            Log.d("MYE_S", "write------");
+            Log.d("MYE_S", e.getMessage());
+            e.getMessage();
+        }
+    }
+
+
 }
