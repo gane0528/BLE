@@ -1,27 +1,54 @@
 package com.ryoga.k17124kk.signalloger_multi.Util;
 
-import android.util.Log;
-
 public class StabilityData {
-    private int sumRssi = 0;
-    private int count = 0;
-    private int ave = 0;
+    private int sumRssi = -100;
+    private int count = 1;
+    private int ave = -100;
 
     private int negaPosi = 0;//ネガティブ-0 ポジティブ-1
 
     public StabilityData() {
     }
 
+    public StabilityData(int sumRssi, int count, int ave, int negaPosi) {
+        this.sumRssi = sumRssi;
+        this.count = count;
+        this.ave = ave;
+        this.negaPosi = negaPosi;
+    }
+
+
+    public int getSumRssi() {
+        return sumRssi;
+    }
+
+    public void setSumRssi(int sumRssi) {
+        this.sumRssi = sumRssi;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+    public void setAve(int ave) {
+        this.ave = ave;
+    }
 
     public void addRssi(int rssi) {
         sumRssi += rssi;
-        count++;
+        count += 1;
+
+        ave = sumRssi / count;
     }
 
 
     public int getAve() {
-        Log.d("MYE_St", (int) (sumRssi / count) + "");
-        return (int) (sumRssi / count);
+//        Log.d("MYE_St", ave + "");
+        return ave;
     }
 
     public void setNegaPosi(int negaPosi) {
