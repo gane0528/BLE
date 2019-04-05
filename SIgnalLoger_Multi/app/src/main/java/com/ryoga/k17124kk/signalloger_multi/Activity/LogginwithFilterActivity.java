@@ -358,9 +358,24 @@ public class LogginwithFilterActivity extends AppCompatActivity implements Beaco
 
             TextView textView_memo = convertView.findViewById(R.id.textView_memo);
             TextView textView_rssi = convertView.findViewById(R.id.textView_rssi);
+            TextView textView_stability = convertView.findViewById(R.id.textView_Stability);
+            TextView textView_negaposi = convertView.findViewById(R.id.textView_state);
 
             textView_memo.setText(getItem(position).getDataSet().getMemo() + "");
             textView_rssi.setText(getItem(position).getDataSet().getRssi() + "");
+
+            if (getItem(position).getStabilityOfSensingSignal().isStability()) {
+                textView_stability.setText("安定");
+            } else {
+                textView_stability.setText("不安定");
+            }
+
+            //一つ前の状態を見て反転し現在の状態にする
+            if (getItem(position).getStabilityOfSensingSignal().getCurrentStabilityData().getNegaPosi() == 0) {
+                textView_negaposi.setText("ポジティブ");
+            } else {
+                textView_negaposi.setText("ネガティブ");
+            }
 
 
             return convertView;

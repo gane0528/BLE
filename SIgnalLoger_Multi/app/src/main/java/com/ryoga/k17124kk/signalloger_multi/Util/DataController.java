@@ -89,6 +89,9 @@ public class DataController {
 
     }
 
+    public StabilityOfSensingSignal getStabilityOfSensingSignal() {
+        return stabilityOfSensingSignal;
+    }
 
     public int getFilterd_rssi() {
         return filterd_rssi;
@@ -233,6 +236,12 @@ public class DataController {
 
     }
 
+
+    //==============================================================================================
+    //==============================================================================================
+    //==============================================================================================
+
+    //安定センシング区間の判定とネガポジ判定
     public void seachStability() {
         stabilityOfSensingSignal.find_Stability_of_Sensing_Signal(time, filterd_rssi);
     }
